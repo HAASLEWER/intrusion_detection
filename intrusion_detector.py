@@ -7,6 +7,8 @@ import imutils
 import numpy as np
 import time
 import cv2
+import smtplib
+import send_email
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -35,7 +37,7 @@ fourcc = cv2.VideoWriter_fourcc(*'X264')
 # used for recording identified threats
 out = cv2.VideoWriter('events.avi', fourcc, 10, (width, height))
 # the full recording
-full_log_out = cv2.VideoWriter('full_log.avi', fourcc, 10, (width, height))
+full_log_out = cv2.VideoWriter('full_log.avi', fourcc, 30, (width, height))
 
 # initialize the HOG descriptor/person detector
 hog = cv2.HOGDescriptor()
@@ -61,7 +63,7 @@ while True:
 
 	# write date and time to frame
 	cv2.putText(frame, datetime.datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"),
-		(10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)		
+		(10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)			
 
 	# detect people in the image
 	(rects, weights) = hog.detectMultiScale(frame, winStride=(8, 8),
@@ -79,10 +81,15 @@ while True:
 
 	# write to video file if a human has been found
 	if len(pick) != 0: 
-		# write frame to file
+		# write frame to video file
 		out.write(frame)
+		# write frame to image
+		cv2.imwrite('intrusion.png', frame)
+		# send an email with the frame to notify user
+		send_email.send_email('haaslewer2@gmail.com', '', '', 'Intrusion Detected', 'An intrusion has been detected, an image of the intrusion has been attached.')
 
-	full_log_out.write(frame)			
+	# write the frame to the full video record
+	full_log_out.write(frame)	
 
 	# show the frame and record if the user presses a key
 	cv2.imshow("Security Feed", frame)
@@ -97,3 +104,4 @@ while True:
 camera.release()
 out.release()
 cv2.destroyAllWindows()
+
