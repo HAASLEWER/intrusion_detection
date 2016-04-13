@@ -63,7 +63,10 @@ while True:
 
 	# write date and time to frame
 	cv2.putText(frame, datetime.datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"),
-		(10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)			
+		(10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)	
+
+	# draw the perimeter on the video
+	#cv2.line(frame, (0, height/2), (width, height/2), (0, 0, 255),5)		
 
 	# detect people in the image
 	(rects, weights) = hog.detectMultiScale(frame, winStride=(8, 8),
@@ -86,7 +89,7 @@ while True:
 		# write frame to image
 		cv2.imwrite('intrusion.png', frame)
 		# send an email with the frame to notify user
-		send_email.send_email('haaslewer2@gmail.com', '', '', 'Intrusion Detected', 'An intrusion has been detected, an image of the intrusion has been attached.')
+		send_email.send_email('haaslewer2@gmail.com', '', 'haaslewer2@gmai.com', 'Intrusion Detected', 'An intrusion has been detected, an image of the intrusion has been attached.')
 
 	# write the frame to the full video record
 	full_log_out.write(frame)	
