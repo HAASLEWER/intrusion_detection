@@ -1,0 +1,4 @@
+python intrusion_detector.py | ffmpeg -f rawvideo -pix_fmt bgr24 -s 640x480 -r 30 -i - -an -f mpeg1video -b 800k -r 30 http://154.0.13.81:8082/test/640/480/
+
+On server
+node stream-server.js [password]

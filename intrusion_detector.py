@@ -9,6 +9,7 @@ import time
 import cv2
 import smtplib
 import send_email
+import sys
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -33,11 +34,11 @@ width = int(camera.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(camera.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
 # Define the codec and create VideoWriter object
-fourcc = cv2.VideoWriter_fourcc(*'X264') 
+fourcc = cv2.VideoWriter_fourcc(*'H264') 
 # used for recording identified threats
 out = cv2.VideoWriter('events.avi', fourcc, 10, (width, height))
 # the full recording
-full_log_out = cv2.VideoWriter('full_log.avi', fourcc, 30, (width, height))
+full_log_out = cv2.VideoWriter('full_log.mp4', fourcc, 6.6, (width, height))
 
 # initialize the HOG descriptor/person detector
 hog = cv2.HOGDescriptor()
@@ -89,13 +90,14 @@ while True:
 		# write frame to image
 		cv2.imwrite('intrusion.png', frame)
 		# send an email with the frame to notify user
-		send_email.send_email('haaslewer2@gmail.com', '', 'haaslewer2@gmai.com', 'Intrusion Detected', 'An intrusion has been detected, an image of the intrusion has been attached.')
+		#send_email.send_email('haaslewer2@gmail.com', '9008255338', 'haaslewer2@gmail.com', 'Intrusion Detected', 'An intrusion has been detected, an image of the intrusion has been attached.')
 
 	# write the frame to the full video record
 	full_log_out.write(frame)	
 
 	# show the frame and record if the user presses a key
-	cv2.imshow("Security Feed", frame)
+	#cv2.imshow("Security Feed", frame)
+	sys.stdout.write(frame.tostring())
 
 	key = cv2.waitKey(1) & 0xFF
 
