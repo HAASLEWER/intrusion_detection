@@ -98,7 +98,7 @@ while True:
 		# write frame to image
 		cv2.imwrite('intrusion.png', frame)
 		# send an email with the frame to notify user
-		#send_email.send_email('haaslewer2@gmail.com', '9008255338', 'haaslewer2@gmail.com', 'Intrusion Detected', 'An intrusion has been detected, an image of the intrusion has been attached.')
+		send_email.send_email('haaslewer2@gmail.com', '9008255338', 'haaslewer2@gmail.com', 'Intrusion Detected', 'An intrusion has been detected, an image of the intrusion has been attached.')
 		
 		# Authenticate
 		response = requests.post(url + '/auth', data=json.dumps(auth_payload), headers=headers)
