@@ -10,6 +10,8 @@ import cv2
 import smtplib
 import send_email
 import sys
+import json
+import requests
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -38,7 +40,10 @@ fourcc = cv2.VideoWriter_fourcc(*'H264')
 # used for recording identified threats
 out = cv2.VideoWriter('events.avi', fourcc, 10, (width, height))
 # the full recording
-full_log_out = cv2.VideoWriter('full_log.mp4', fourcc, 6.6, (width, height))
+#full_log_out = cv2.VideoWriter('full_log.mp4', fourcc, 6.6, (width, height))
+
+url = "154.0.13.81:8080";
+auth_payload = {'email': 'coetzeel@live.co.za', 'password': '900825'}
 
 # initialize the HOG descriptor/person detector
 hog = cv2.HOGDescriptor()
@@ -91,9 +96,12 @@ while True:
 		cv2.imwrite('intrusion.png', frame)
 		# send an email with the frame to notify user
 		#send_email.send_email('haaslewer2@gmail.com', '9008255338', 'haaslewer2@gmail.com', 'Intrusion Detected', 'An intrusion has been detected, an image of the intrusion has been attached.')
-
+		# Authenticate
+		token_res = requests.post(url, data=json.dumps(auth_payload))
+		token = token_res.token;
+		print(token)
 	# write the frame to the full video record
-	full_log_out.write(frame)	
+	#full_log_out.write(frame)	
 
 	# show the frame and record if the user presses a key
 	#cv2.imshow("Security Feed", frame)
