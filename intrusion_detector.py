@@ -14,7 +14,25 @@ import json
 import requests
 import base64
 import os
-from multiprocessing import Pool
+import threading
+
+def createEvent():
+	# send an email with the frame to notify user
+	send_email.send_email('haaslewer2@gmail.com', '9008255338', 'haaslewer2@gmail.com', 'Intrusion Detected', 'An intrusion has been detected, an image of the intrusion has been attached.')
+	
+	# Authenticate
+	response = requests.post(url + '/auth', data=json.dumps(auth_payload), headers=headers)
+	json_res = response.json()
+	token = json_res['token']
+
+	# Create new event
+	with open("intrusion.png", "rb") as image_file:
+	    encoded_string = base64.b64encode(image_file.read())
+	    event_payload = {"image": encoded_string}
+	    response = requests.post(url + '/events?token=' + token, data=json.dumps(event_payload), headers=headers)
+	    json_res = response.json()
+	    print(json_res)
+	    os.remove("intrusion.png")	
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -103,8 +121,7 @@ while True:
 
 		if last_event_time < datetime.datetime.now()-datetime.timedelta(seconds=300):
 			last_event_time = datetime.datetime.now()
-			pool = Pool(processes=1)
-			result = pool.apply_async(createEvent)
+			threading.Thread(target=createEvent).start()
 
 
 
@@ -125,22 +142,4 @@ while True:
 camera.release()
 out.release()
 cv2.destroyAllWindows()
-
-def createEvent():
-	# send an email with the frame to notify user
-	send_email.send_email('haaslewer2@gmail.com', '9008255338', 'haaslewer2@gmail.com', 'Intrusion Detected', 'An intrusion has been detected, an image of the intrusion has been attached.')
-	
-	# Authenticate
-	response = requests.post(url + '/auth', data=json.dumps(auth_payload), headers=headers)
-	json_res = response.json()
-	token = json_res['token']
-
-	# Create new event
-	with open("intrusion.png", "rb") as image_file:
-	    encoded_string = base64.b64encode(image_file.read())
-	    event_payload = {"image": encoded_string}
-	    response = requests.post(url + '/events?token=' + token, data=json.dumps(event_payload), headers=headers)
-	    json_res = response.json()
-	    print(json_res)
-	    os.remove("intrusion.png")	
 
