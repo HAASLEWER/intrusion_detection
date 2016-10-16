@@ -44,6 +44,8 @@ out = cv2.VideoWriter('events.avi', fourcc, 10, (width, height))
 # the full recording
 #full_log_out = cv2.VideoWriter('full_log.mp4', fourcc, 6.6, (width, height))
 
+last_event_time = datetime.datetime.now()
+
 url = "http://154.0.13.81:8080";
 headers = {'content-type': 'application/json'}
 auth_payload = {'email': 'coetzeel@live.co.za', 'password': '900825'}
@@ -97,22 +99,24 @@ while True:
 		out.write(frame)
 		# write frame to image
 		cv2.imwrite('intrusion.png', frame)
-		# send an email with the frame to notify user
-		send_email.send_email('haaslewer2@gmail.com', '9008255338', 'haaslewer2@gmail.com', 'Intrusion Detected', 'An intrusion has been detected, an image of the intrusion has been attached.')
-		
-		# Authenticate
-		response = requests.post(url + '/auth', data=json.dumps(auth_payload), headers=headers)
-		json_res = response.json()
-		token = json_res['token']
 
-		# Create new event
-		with open("intrusion.png", "rb") as image_file:
-		    encoded_string = base64.b64encode(image_file.read())
-		    event_payload = {"image": encoded_string}
-		    response = requests.post(url + '/events?token=' + token, data=json.dumps(event_payload), headers=headers)
-		    json_res = response.json()
-		    print(json_res)
-		    os.remove("intrusion.png")
+		if last_event_time < datetime.datetime.now()-datetime.timedelta(seconds=300):
+			# send an email with the frame to notify user
+			send_email.send_email('haaslewer2@gmail.com', '9008255338', 'haaslewer2@gmail.com', 'Intrusion Detected', 'An intrusion has been detected, an image of the intrusion has been attached.')
+			
+			# Authenticate
+			response = requests.post(url + '/auth', data=json.dumps(auth_payload), headers=headers)
+			json_res = response.json()
+			token = json_res['token']
+
+			# Create new event
+			with open("intrusion.png", "rb") as image_file:
+			    encoded_string = base64.b64encode(image_file.read())
+			    event_payload = {"image": encoded_string}
+			    response = requests.post(url + '/events?token=' + token, data=json.dumps(event_payload), headers=headers)
+			    json_res = response.json()
+			    print(json_res)
+			    os.remove("intrusion.png")
 
 
 	# write the frame to the full video record
