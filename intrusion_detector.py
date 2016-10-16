@@ -44,7 +44,7 @@ out = cv2.VideoWriter('events.avi', fourcc, 10, (width, height))
 # the full recording
 #full_log_out = cv2.VideoWriter('full_log.mp4', fourcc, 6.6, (width, height))
 
-last_event_time = datetime.datetime.now()
+last_event_time = datetime.datetime.now()-datetime.timedelta(seconds=300)
 
 url = "http://154.0.13.81:8080";
 headers = {'content-type': 'application/json'}
@@ -101,6 +101,7 @@ while True:
 		cv2.imwrite('intrusion.png', frame)
 
 		if last_event_time < datetime.datetime.now()-datetime.timedelta(seconds=300):
+			last_event_time = datetime.datetime.now()
 			# send an email with the frame to notify user
 			send_email.send_email('haaslewer2@gmail.com', '9008255338', 'haaslewer2@gmail.com', 'Intrusion Detected', 'An intrusion has been detected, an image of the intrusion has been attached.')
 			
