@@ -31,7 +31,6 @@ def createEvent():
 	    event_payload = {"image": encoded_string}
 	    response = requests.post(url + '/events?token=' + token, data=json.dumps(event_payload), headers=headers)
 	    json_res = response.json()
-	    print(json_res)
 	    os.remove("intrusion.png")	
 
 # construct the argument parser and parse the arguments
