@@ -58,7 +58,7 @@ height = int(camera.get(cv2.CAP_PROP_FRAME_HEIGHT))
 # Define the codec and create VideoWriter object
 fourcc = cv2.VideoWriter_fourcc(*'H264') 
 # used for recording identified threats
-out = cv2.VideoWriter('events.avi', fourcc, 10, (width, height))
+out = cv2.VideoWriter('events.mp4', fourcc, 6.6, (width, height))
 # the full recording
 #full_log_out = cv2.VideoWriter('full_log.mp4', fourcc, 6.6, (width, height))
 
